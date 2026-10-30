@@ -1,0 +1,15 @@
+---
+
+# clang-format configuration for HAL directory
+# Based on LLVM style with minimal custom modifications
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Custom settings that differ from LLVM defaults
+AllowShortFunctionsOnASingleLine: None
+AlignTrailingComments: false
+BreakBeforeBraces: Allman
+ColumnLimit: 100
+IndentCaseLabels: true
+IndentExternBlock: NoIndent
+IndentPPDirectives: BeforeHash

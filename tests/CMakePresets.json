@@ -1,0 +1,83 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21 },
+  "configurePresets": [
+    {
+      "name": "stm32f0xx_hal_testing",
+      "displayName": "STM32F0XX HAL testing (Ninja Multi-Config)",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/stm32f0xx_hal_testing",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../system/arm-none-eabi-gcc.cmake",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MCU_FAMILY": "STM32F0XX",
+        "HW_TYPE": "HW_TYPE__STM32F0XX_HAL_TESTING"
+      }
+    },
+    {
+      "name": "stm32f1xx_hal_testing",
+      "displayName": "STM32F1XX HAL testing (Ninja Multi-Config)",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/stm32f1xx_hal_testing",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../system/arm-none-eabi-gcc.cmake",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MCU_FAMILY": "STM32F1XX",
+        "HW_TYPE": "HW_TYPE__STM32F1XX_HAL_TESTING"
+      }
+    },
+    {
+      "name": "stm32f30x_hal_testing",
+      "displayName": "STM32F30X HAL testing (Ninja Multi-Config)",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/stm32f30x_hal_testing",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../system/arm-none-eabi-gcc.cmake",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MCU_FAMILY": "STM32F30X",
+        "HW_TYPE": "HW_TYPE__STM32F30X_HAL_TESTING"
+      }
+    },
+    {
+      "name": "stm32f4xx_hal_testing",
+      "displayName": "STM32F4XX HAL testing (Ninja Multi-Config)",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/stm32f4xx_hal_testing",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../system/arm-none-eabi-gcc.cmake",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MCU_FAMILY": "STM32F4XX",
+        "HW_TYPE": "HW_TYPE__STM32F4XX_HAL_TESTING"
+      }
+    },
+    {
+      "name": "stm32l4xx_hal_testing",
+      "displayName": "STM32L4XX HAL testing (Ninja Multi-Config)",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/stm32l4xx_hal_testing",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/../system/arm-none-eabi-gcc.cmake",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "MCU_FAMILY": "STM32L4XX",
+        "HW_TYPE": "HW_TYPE__STM32L4XX_HAL_TESTING"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "stm32f0xx_hal_testing_debug", "configurePreset": "stm32f0xx_hal_testing", "configuration": "Debug", "jobs": 0 },
+    { "name": "stm32f0xx_hal_testing_release", "configurePreset": "stm32f0xx_hal_testing", "configuration": "Release", "jobs": 0 },
+    { "name": "stm32f1xx_hal_testing_debug", "configurePreset": "stm32f1xx_hal_testing", "configuration": "Debug", "jobs": 0 },
+    { "name": "stm32f1xx_hal_testing_release", "configurePreset": "stm32f1xx_hal_testing", "configuration": "Release", "jobs": 0 },
+    { "name": "stm32f30x_hal_testing_debug", "configurePreset": "stm32f30x_hal_testing", "configuration": "Debug", "jobs": 0 },
+    { "name": "stm32f30x_hal_testing_release", "configurePreset": "stm32f30x_hal_testing", "configuration": "Release", "jobs": 0 },
+    { "name": "stm32f4xx_hal_testing_debug", "configurePreset": "stm32f4xx_hal_testing", "configuration": "Debug", "jobs": 0 },
+    { "name": "stm32f4xx_hal_testing_release", "configurePreset": "stm32f4xx_hal_testing", "configuration": "Release", "jobs": 0 },
+    { "name": "stm32l4xx_hal_testing_debug", "configurePreset": "stm32l4xx_hal_testing", "configuration": "Debug", "jobs": 0 },
+    { "name": "stm32l4xx_hal_testing_release", "configurePreset": "stm32l4xx_hal_testing", "configuration": "Release", "jobs": 0 }
+  ]
+}
