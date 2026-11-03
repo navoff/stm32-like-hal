@@ -7,9 +7,10 @@ author does not use.
 ## Code style
 
 - C11, no dynamic memory, no RTOS assumptions, no C++.
-- Formatting is enforced by `.clang-format` (LLVM base, Allman braces, 100 columns). Run
-  `tests/fix_format.sh` before committing. Vendor code in `std_periph_lib/` and the ST USB stacks
-  in `usb/stm32*` are not formatted.
+- Formatting is enforced by `.clang-format` (LLVM base, Allman braces, 100 columns) with
+  clang-format 20. Run `tests/fix_format.sh` before committing; `--check` only reports, as CI
+  does. Vendor code in `std_periph_lib/` and the ST USB stacks in `usb/stm32*` are not
+  formatted.
 - Naming: `module_verb_object()` for functions (`gpio_pin_set_mode`, `uart_x_tx_byte`),
   `module_name_t` for types, `MODULE_NAME` for macros. Enumerators use a double underscore to
   separate the type from the value: `GPIO_PIN_PULL__UP`, `UART_LINE_MODE__DMA`.

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build all families
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same major release as the author's toolchain; newer GCC may add warnings that -Werror
+      # turns into errors
+      - uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '10.3-2021.07'
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Build test firmware for every preset
+        run: tests/build_all.sh
+
+  format:
+    name: Check formatting
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned: clang-format output differs between major versions
+      - name: Install clang-format
+        run: pipx install clang-format==20.1.8
+
+      - name: Check formatting
+        run: tests/fix_format.sh --check

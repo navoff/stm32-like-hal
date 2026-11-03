@@ -2,6 +2,8 @@
 
 [English](README.md) | Русский
 
+[![CI](https://github.com/navoff/stm32-like-hal/actions/workflows/ci.yml/badge.svg)](https://github.com/navoff/stm32-like-hal/actions/workflows/ci.yml)
+
 Небольшой слой аппаратной абстракции на C11 для микроконтроллеров STM32 и совместимых с ними
 (GD32). Написан для собственных устройств автора и опубликован как есть. Работает поверх ST
 Standard Peripheral Library (F1, F3, F4) и драйверов ST LL (F0, L4), прячет различия между
@@ -78,7 +80,8 @@ tests/          проверка сборки для каждого поддер
 
 - `arm-none-eabi-gcc` 10 или новее
 - CMake 3.21 или новее, Ninja
-- clang-format для `tests/fix_format.sh`
+- clang-format 20 для `tests/fix_format.sh`; другие мажорные версии форматируют часть
+  конструкций иначе
 
 ## Сборка проверочного проекта
 
@@ -95,6 +98,10 @@ cmake --build --preset stm32f1xx_hal_testing_debug
 стартовый файл из библиотеки производителя и скрипт компоновщика из `tests/system/`. Архив HAL
 линкуется целиком и без удаления неиспользуемых секций, поэтому каждый объект драйвера обязан
 разрешить все свои символы, иначе сборка не пройдёт.
+
+`tests/fix_format.sh --check` показывает файлы, которые расходятся с `.clang-format`, и ничего
+не меняет. CI (`.github/workflows/ci.yml`) запускает оба скрипта на каждый push и pull request
+с Arm GNU Toolchain 10.3-2021.07 и clang-format 20.1.8.
 
 ## Использование HAL в проекте
 
