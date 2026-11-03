@@ -142,8 +142,11 @@ target_include_directories(hal_lib PUBLIC ${HAL_INCLUDES} ${HAL_ADD_INCLUDES})
 target_compile_definitions(hal_lib PUBLIC ${HAL_DEFINITIONS})
 target_link_libraries(hal_lib PUBLIC std_periph_lib)
 
+# One section per function and object, so that a firmware linked with --gc-sections keeps
+# only the drivers and functions it calls
 target_compile_options(hal_lib PRIVATE
   -Wall -Wextra -Werror
+  -ffunction-sections -fdata-sections
 )
 
 if(DEFINED CONFIG_FLAGS)

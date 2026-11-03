@@ -229,10 +229,13 @@ add_library(std_periph_lib STATIC ${STD_PERIPH_SOURCES})
 target_include_directories(std_periph_lib PUBLIC ${STD_PERIPH_INCLUDES})
 target_compile_definitions(std_periph_lib PUBLIC ${STD_PERIPH_DEFINITIONS} ${STD_PERIPH_ADD_DEFINITIONS})
 
+# One section per function and object, so that a firmware linked with --gc-sections keeps
+# only the vendor functions it calls
 target_compile_options(std_periph_lib PRIVATE
   -Wall -Wextra -Werror
   -Wno-unused-parameter
   -Wno-implicit-fallthrough
+  -ffunction-sections -fdata-sections
 )
 
 if(DEFINED CONFIG_FLAGS)

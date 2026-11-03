@@ -123,6 +123,11 @@ Arm GNU Toolchain 10.3-2021.07 and clang-format 20.1.8.
 
    `MCU_FAMILY` selects the vendor library and the family-specific sources. The toolchain file
    `system/arm-none-eabi-gcc.cmake` sets CPU flags from the same variable.
+
+   `hal_lib` and `std_periph_lib` are compiled with `-ffunction-sections -fdata-sections`, so
+   linking the firmware with `-Wl,--gc-sections` drops the drivers and vendor functions it does
+   not call. Nothing references `fw_info`, so pass `-Wl,--undefined=fw_info`: `KEEP` in the
+   linker script alone does not pull an unreferenced object out of a static library.
 5. Provide the startup file, `SystemInit` and the linker script. The linker script must define
    the `.fw_info` section and, for internal-flash NVRAM, the `.nvram` region (see docs/nvram.md).
 6. Call `tick_timer_init()` first, then the drivers you need; call the `*_process()` functions
