@@ -174,7 +174,75 @@ uart_hw_item_t const uart_hw_items[UART_UNITS_AMOUNT] = {
 #endif
 };
 
-uart_unit_t uart_units[UART_UNITS_AMOUNT];
+// Driver instances exist only for the enabled UARTs
+#if (FEATURE_ENABLE_UART0)
+static uart_unit_t uart_unit_0;
+#endif
+#if (FEATURE_ENABLE_UART1)
+static uart_unit_t uart_unit_1;
+#endif
+// LPUART of GD32L23x uses the place of UART2
+#if (FEATURE_ENABLE_UART2) || (FEATURE_ENABLE_LPUART)
+static uart_unit_t uart_unit_2;
+#endif
+#if (FEATURE_ENABLE_UART3)
+static uart_unit_t uart_unit_3;
+#endif
+#if (FEATURE_ENABLE_UART4)
+static uart_unit_t uart_unit_4;
+#endif
+#if (FEATURE_ENABLE_UART5)
+static uart_unit_t uart_unit_5;
+#endif
+#if (FEATURE_ENABLE_UART6)
+static uart_unit_t uart_unit_6;
+#endif
+#if (FEATURE_ENABLE_UART7)
+static uart_unit_t uart_unit_7;
+#endif
+
+uart_unit_t *const uart_units[UART_UNITS_AMOUNT] = {
+#if (FEATURE_ENABLE_UART0)
+    &uart_unit_0,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART1)
+    &uart_unit_1,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART2) || (FEATURE_ENABLE_LPUART)
+    &uart_unit_2,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART3)
+    &uart_unit_3,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART4)
+    &uart_unit_4,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART5)
+    &uart_unit_5,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART6)
+    &uart_unit_6,
+#else
+    NULL,
+#endif
+#if (FEATURE_ENABLE_UART7)
+    &uart_unit_7,
+#else
+    NULL,
+#endif
+};
 
 bool uart_core_is_need_over8(uint8_t uart_number, uint32_t baudrate);
 void uart_core_rcc_cmd(uint8_t uart_number, bool new_state);
@@ -341,7 +409,8 @@ void uart_core_deinit(uint8_t uart_number)
   uart_hw_item_t const *uart_hw = &uart_hw_items[uart_number];
   hal_assert(uart_hw->uart != 0);
 
-  uart_unit_t *uart_unit = &uart_units[uart_number];
+  uart_unit_t *uart_unit = uart_units[uart_number];
+  hal_assert(uart_unit != NULL);
 
   uart_unit->inited = 0;
 

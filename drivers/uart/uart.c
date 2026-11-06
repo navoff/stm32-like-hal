@@ -5,6 +5,7 @@
 
 #include "config.h"
 
+#include <stddef.h>
 #include <stdio.h>
 
 #include "drivers/dma.h"
@@ -30,13 +31,30 @@ void uart_rx_process(uart_unit_t *uart_unit);
 void uart_tx_process(uart_unit_t *uart_unit);
 
 /**
+ * @brief Get the driver instance of a UART
+ * @param uart_number - UART number, must be enabled in the config (FEATURE_ENABLE_UARTx)
+ * @return pointer to the UART driver instance
+ */
+static uart_unit_t *uart_unit_get(uint8_t uart_number)
+{
+  check_uart_number(uart_number);
+
+  uart_unit_t *uart_unit = uart_units[uart_number];
+  hal_assert(uart_unit != NULL);
+  return uart_unit;
+}
+
+/**
  * @brief Process the state of all UARTs
  */
 void uart_all_process(void)
 {
   for (uint8_t i = 0; i < UART_UNITS_AMOUNT; i++)
   {
-    uart_process(&uart_units[i]);
+    if (uart_units[i] != NULL)
+    {
+      uart_process(uart_units[i]);
+    }
   }
 }
 
@@ -76,9 +94,7 @@ void uart_process(uart_unit_t *uart_unit)
  */
 void uart_x_process(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
-  uart_process(&uart_units[uart_number]);
+  uart_process(uart_unit_get(uart_number));
 }
 
 /**
@@ -361,9 +377,7 @@ void uart_struct_init(uart_init_struct_t *uart_init_struct)
  */
 void uart_x_init(uint8_t uart_number, uart_init_struct_t *uart_init_struct)
 {
-  check_uart_number(uart_number);
-
-  uart_core_init((uart_unit_t *)&uart_units[uart_number], uart_init_struct);
+  uart_core_init(uart_unit_get(uart_number), uart_init_struct);
 }
 
 /**
@@ -384,10 +398,8 @@ void uart_x_deinit(uint8_t uart_number)
  */
 bool uart_x_tx_is_in_progress(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
   bool res = false;
-  uart_unit_t *uart_unit = &uart_units[uart_number];
+  uart_unit_t *uart_unit = uart_unit_get(uart_number);
 
   if (uart_unit->inited)
   {
@@ -430,13 +442,13 @@ bool uart_x_tx_is_in_progress(uint8_t uart_number)
  */
 error_t uart_x_tx_byte(uint8_t uart_number, uint8_t data)
 {
-  check_uart_number(uart_number);
+  uart_unit_t *uart_unit = uart_unit_get(uart_number);
 
   error_t res = ERR_RESULT;
-  if (uart_units[uart_number].inited)
+  if (uart_unit->inited)
   {
-    res = fifo_uint8_put((fifo_uint8_t *)&uart_units[uart_number].tx.fifo, data);
-    uart_tx_initiate(&uart_units[uart_number]);
+    res = fifo_uint8_put((fifo_uint8_t *)&uart_unit->tx.fifo, data);
+    uart_tx_initiate(uart_unit);
   }
 
   return res;
@@ -451,13 +463,13 @@ error_t uart_x_tx_byte(uint8_t uart_number, uint8_t data)
  */
 error_t uart_x_tx_array(uint8_t uart_number, uint8_t *array, uint16_t size)
 {
-  check_uart_number(uart_number);
+  uart_unit_t *uart_unit = uart_unit_get(uart_number);
 
   error_t res = ERR_RESULT;
-  if (uart_units[uart_number].inited)
+  if (uart_unit->inited)
   {
-    res = fifo_uint8_put_array((fifo_uint8_t *)&uart_units[uart_number].tx.fifo, array, size);
-    uart_tx_initiate(&uart_units[uart_number]);
+    res = fifo_uint8_put_array((fifo_uint8_t *)&uart_unit->tx.fifo, array, size);
+    uart_tx_initiate(uart_unit);
   }
 
   return res;
@@ -471,13 +483,13 @@ error_t uart_x_tx_array(uint8_t uart_number, uint8_t *array, uint16_t size)
  */
 error_t uart_x_tx_str(uint8_t uart_number, char *str)
 {
-  check_uart_number(uart_number);
+  uart_unit_t *uart_unit = uart_unit_get(uart_number);
 
   error_t res = ERR_RESULT;
-  if (uart_units[uart_number].inited)
+  if (uart_unit->inited)
   {
-    res = fifo_uint8_put_str((fifo_uint8_t *)&uart_units[uart_number].tx.fifo, str);
-    uart_tx_initiate(&uart_units[uart_number]);
+    res = fifo_uint8_put_str((fifo_uint8_t *)&uart_unit->tx.fifo, str);
+    uart_tx_initiate(uart_unit);
   }
 
   return res;
@@ -485,70 +497,59 @@ error_t uart_x_tx_str(uint8_t uart_number, char *str)
 
 uint16_t uart_x_get_tx_fifo_empty_count(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
-  fifo_uint8_t *fifo = &uart_units[uart_number].tx.fifo;
+  fifo_uint8_t *fifo = &uart_unit_get(uart_number)->tx.fifo;
   return (fifo->size - fifo->idx);
 }
 
 uint16_t uart_x_get_tx_fifo_idx(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
-  return uart_units[uart_number].tx.fifo.idx;
+  return uart_unit_get(uart_number)->tx.fifo.idx;
 }
 uint16_t uart_x_get_rx_fifo_idx(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-  return uart_units[uart_number].rx.fifo.idx;
+  return uart_unit_get(uart_number)->rx.fifo.idx;
 }
 error_t uart_x_rx_byte(uint8_t uart_number, uint8_t *data)
 {
-  check_uart_number(uart_number);
-
-  fifo_uint8_t *fifo = &uart_units[uart_number].rx.fifo;
+  fifo_uint8_t *fifo = &uart_unit_get(uart_number)->rx.fifo;
   return fifo_uint8_get(fifo, data);
 }
 
 fifo_uint8_t *uart_x_get_rx_fifo(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
-  return (fifo_uint8_t *)&uart_units[uart_number].rx.fifo;
+  return (fifo_uint8_t *)&uart_unit_get(uart_number)->rx.fifo;
 }
 
 fifo_uint8_t *uart_x_get_tx_fifo(uint8_t uart_number)
 {
-  check_uart_number(uart_number);
-
-  return (fifo_uint8_t *)&uart_units[uart_number].tx.fifo;
+  return (fifo_uint8_t *)&uart_unit_get(uart_number)->tx.fifo;
 }
 
 void uart_x_cmd(uint8_t uart_number, bool state)
 {
-  check_uart_number(uart_number);
+  uart_unit_t *uart_unit = uart_unit_get(uart_number);
 
 #if defined(STM32F1XX) || defined(STM32F4XX)
-  USART_Cmd(uart_units[uart_number].UART, state);
+  USART_Cmd(uart_unit->UART, state);
 
 #elif defined(STM32L4XX)
   if (state)
   {
-    LL_USART_Enable(uart_units[uart_number].UART);
+    LL_USART_Enable(uart_unit->UART);
   }
   else
   {
-    LL_USART_Disable(uart_units[uart_number].UART);
+    LL_USART_Disable(uart_unit->UART);
   }
 
 #elif defined(GD32E11X) || defined(GD32L23X)
   if (state)
   {
-    usart_enable(uart_units[uart_number].UART);
+    usart_enable(uart_unit->UART);
   }
   else
   {
-    usart_disable(uart_units[uart_number].UART);
+    usart_disable(uart_unit->UART);
   }
 
 #else
@@ -559,69 +560,69 @@ void uart_x_cmd(uint8_t uart_number, bool state)
 #if (FEATURE_ENABLE_UART0)
 void USART0_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[0]);
+  uart_irq_handler(uart_units[0]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART1)
 void USART1_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[1]);
+  uart_irq_handler(uart_units[1]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART2)
 void USART2_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[2]);
+  uart_irq_handler(uart_units[2]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART3)
 void USART3_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[3]);
+  uart_irq_handler(uart_units[3]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART4)
 void UART4_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[4]);
+  uart_irq_handler(uart_units[4]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART5)
 void UART5_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[5]);
+  uart_irq_handler(uart_units[5]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART6)
 void USART6_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[6]);
+  uart_irq_handler(uart_units[6]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART7)
 void UART7_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[7]);
+  uart_irq_handler(uart_units[7]);
 }
 #endif
 
 #if (FEATURE_ENABLE_UART8)
 void UART8_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[8]);
+  uart_irq_handler(uart_units[8]);
 }
 #endif
 
 #if (FEATURE_ENABLE_LPUART)
 void LPUART_IRQHandler(void)
 {
-  uart_irq_handler(&uart_units[2]);
+  uart_irq_handler(uart_units[2]);
 }
 #endif

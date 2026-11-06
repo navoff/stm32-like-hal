@@ -219,4 +219,5 @@ void uart_core_error_handler(uart_unit_t *uart_unit, uint16_t sr);
 error_t uart_core_tx_polling_fifo_byte(uart_unit_t *uart_unit);
 error_t uart_core_tx_irq_first_fifo_byte(uart_unit_t *uart_unit);
 
-extern uart_unit_t uart_units[];
+/// Driver instance by UART number, NULL for the disabled UARTs
+extern uart_unit_t *const uart_units[];
