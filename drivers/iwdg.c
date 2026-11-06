@@ -24,30 +24,18 @@
   #define IWDG_LSI_FREQ 32000
 #endif
 
-#if defined(STM32F1XX) || defined(STM32F30X) || defined(STM32F4XX)
-
-  /// Frequency prescaler
-  #define IWDG_DRIVER_PRESCALER_ENUM IWDG_Prescaler_32
-
-#elif defined(STM32L4XX) || defined(STM32F0XX)
-  /// Frequency prescaler
-  #define IWDG_DRIVER_PRESCALER_ENUM LL_IWDG_PRESCALER_32
-
-#elif defined(GD32L23X) || defined(GD32E11X)
-  /// Frequency prescaler
-  #define IWDG_DRIVER_PRESCALER_ENUM FWDGT_PSC_DIV128
-
-#else
-  #error This MCU not supported
-#endif
-
 #if defined(STM32F1XX) || defined(STM32F30X) || defined(STM32F4XX) || defined(STM32L4XX) ||        \
     defined(STM32F0XX) || defined(GD32L23X) || defined(GD32E11X)
-  /// Frequency prescaler factor
-  #define IWDG_DRIVER_PRESCALER_FACTOR (0x04 << IWDG_DRIVER_PRESCALER_ENUM)
+  /// Largest prescaler code. Code n divides the LSI clock by (4 << n), from 4 to 256; the
+  /// IWDG_Prescaler_x, LL_IWDG_PRESCALER_x and FWDGT_PSC_DIVx constants are these codes
+  #define IWDG_PRESCALER_CODE_MAX 6
 
   /// Default Reload counter value
   #define IWDG_DEFAULT_RLR 0x0FFF
+
+  /// Largest reload value written by the driver: the counter is 12-bit, and 0xFFF is left out
+  /// for iwdg_is_enabled()
+  #define IWDG_RELOAD_MAX (IWDG_DEFAULT_RLR - 1)
 #else
   #error This MCU not supported
 #endif
@@ -100,26 +88,34 @@ void iwdg_init(uint32_t timeout)
 
   iwdg_lsi_enable();
 
-  uint32_t freq = iwdg_get_lsi_freq();
+  // LSI ticks in the timeout; fits in 32 bits for IWDG_TIMEOUT_MAX
+  uint32_t ticks = timeout * iwdg_get_lsi_freq() / 1000;
 
-  uint16_t reload_value = timeout * freq / 1000 / IWDG_DRIVER_PRESCALER_FACTOR;
-  // Exclude the possibility of setting a period equal to 0xFFF. Since this is the default value,
-  // its change can be used to track whether IWDG was enabled previously
-  if (reload_value == IWDG_DEFAULT_RLR)
+  // The smallest prescaler whose reload value fits in the 12-bit counter gives the finest step
+  uint8_t prescaler_code = 0;
+  while (((ticks >> 2 >> prescaler_code) > IWDG_RELOAD_MAX) &&
+         (prescaler_code < IWDG_PRESCALER_CODE_MAX))
   {
-    reload_value--;
+    prescaler_code++;
+  }
+
+  uint32_t reload_value = ticks >> 2 >> prescaler_code;
+  // Never write 0xFFF: it is the reset value, and its change shows that IWDG was enabled
+  if (reload_value > IWDG_RELOAD_MAX)
+  {
+    reload_value = IWDG_RELOAD_MAX;
   }
 
 #if defined(STM32F1XX) || defined(STM32F30X) || defined(STM32F4XX)
   IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-  IWDG_SetPrescaler(IWDG_DRIVER_PRESCALER_ENUM);
-  IWDG_SetReload(reload_value);
+  IWDG_SetPrescaler(prescaler_code);
+  IWDG_SetReload((uint16_t)reload_value);
   IWDG_ReloadCounter();
   IWDG_Enable();
 
 #elif defined(STM32L4XX) || defined(STM32F0XX)
   LL_IWDG_EnableWriteAccess(IWDG);
-  LL_IWDG_SetPrescaler(IWDG, IWDG_DRIVER_PRESCALER_ENUM);
+  LL_IWDG_SetPrescaler(IWDG, prescaler_code);
 
   LL_IWDG_SetReloadCounter(IWDG, reload_value);
 
@@ -127,7 +123,7 @@ void iwdg_init(uint32_t timeout)
   LL_IWDG_Enable(IWDG);
 
 #elif defined(GD32E11X) || defined(GD32L23X)
-  fwdgt_config(reload_value, IWDG_DRIVER_PRESCALER_ENUM);
+  fwdgt_config((uint16_t)reload_value, prescaler_code);
   fwdgt_enable();
 
 #else
