@@ -34,7 +34,7 @@ void uart_tx_process(uart_unit_t *uart_unit);
  */
 void uart_all_process(void)
 {
-  for (uint8_t i = 0; i < UART_AMOUNT; i++)
+  for (uint8_t i = 0; i < UART_UNITS_AMOUNT; i++)
   {
     uart_process(&uart_units[i]);
   }

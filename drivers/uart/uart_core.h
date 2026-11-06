@@ -12,6 +12,14 @@
 
 #define UART_AMOUNT 8
 
+#if defined(GD32E11X) || defined(GD32L23X)
+  /// Number of driver instances: GD32 numbers UARTs from 0
+  #define UART_UNITS_AMOUNT UART_AMOUNT
+#else
+  /// Number of driver instances: STM32 numbers UARTs from 1, element 0 is unused
+  #define UART_UNITS_AMOUNT (UART_AMOUNT + 1)
+#endif
+
 #define UART_NUMBER_UNDEF 0xFF
 
 typedef struct

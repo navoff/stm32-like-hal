@@ -62,7 +62,7 @@ typedef struct
     #define FEATURE_ENABLE_UART8 0
 #endif
 
-uart_hw_item_t const uart_hw_items[UART_AMOUNT + 1] = {
+uart_hw_item_t const uart_hw_items[UART_UNITS_AMOUNT] = {
     // fake USART0
     {.uart = 0},
 
@@ -115,7 +115,7 @@ uart_hw_item_t const uart_hw_items[UART_AMOUNT + 1] = {
 #endif
 };
 
-uart_unit_t uart_units[UART_AMOUNT];
+uart_unit_t uart_units[UART_UNITS_AMOUNT];
 
 bool uart_core_is_need_over8(uint8_t uart_number, uint32_t baudrate);
 void uart_core_rcc_cmd(uint8_t uart_number, bool new_state);
@@ -309,7 +309,7 @@ void uart_core_deinit(uint8_t uart_number)
 {
   hal_assert((uart_number > 0) && (uart_number <= UART_AMOUNT));
 
-  uart_unit_t *uart_unit = &uart_units[uart_number - 1];
+  uart_unit_t *uart_unit = &uart_units[uart_number];
 
   uart_unit->inited = 0;
 

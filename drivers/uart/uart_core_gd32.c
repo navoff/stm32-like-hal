@@ -73,7 +73,7 @@ typedef struct
 #endif
 } uart_hw_item_t;
 
-uart_hw_item_t const uart_hw_items[UART_AMOUNT] = {
+uart_hw_item_t const uart_hw_items[UART_UNITS_AMOUNT] = {
 #if (FEATURE_ENABLE_UART0)
     {
         .uart = USART0,
@@ -174,7 +174,7 @@ uart_hw_item_t const uart_hw_items[UART_AMOUNT] = {
 #endif
 };
 
-uart_unit_t uart_units[UART_AMOUNT];
+uart_unit_t uart_units[UART_UNITS_AMOUNT];
 
 bool uart_core_is_need_over8(uint8_t uart_number, uint32_t baudrate);
 void uart_core_rcc_cmd(uint8_t uart_number, bool new_state);
