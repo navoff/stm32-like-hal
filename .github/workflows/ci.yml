@@ -9,7 +9,7 @@ jobs:
     name: Build all families
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Same major release as the author's toolchain; newer GCC may add warnings that -Werror
       # turns into errors
@@ -27,7 +27,7 @@ jobs:
     name: Check formatting
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Pinned: clang-format output differs between major versions
       - name: Install clang-format
