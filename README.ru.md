@@ -59,6 +59,10 @@ API не заморожен, между тегами возможны ломаю
 `utils/checksum` (CRC-16/MODBUS, CRC-16/X-25, CRC-32), `utils/lp_filter`, `utils/assert`,
 `protocols/arb_core` (пакетный протокол), `protocols/nmea_core` (парсер NMEA 0183).
 
+## Где используется
+
+- [nixie](https://github.com/navoff/nixie) - настольные часы на индикаторах ИН-14, STM32F100
+
 ## Структура
 
 ```

@@ -58,6 +58,10 @@ Platform-independent utilities: `utils/fifo` (byte and generic ring buffers),
 `utils/checksum` (CRC-16/MODBUS, CRC-16/X-25, CRC-32), `utils/lp_filter`, `utils/assert`,
 `protocols/arb_core` (packet protocol), `protocols/nmea_core` (NMEA 0183 parser).
 
+## Used in
+
+- [nixie](https://github.com/navoff/nixie) - desk clock on IN-14 nixie tubes, STM32F100
+
 ## Layout
 
 ```
