@@ -62,6 +62,7 @@ API не заморожен, между тегами возможны ломаю
 ## Где используется
 
 - [nixie](https://github.com/navoff/nixie) - настольные часы на индикаторах ИН-14, STM32F100
+- [led-cube](https://github.com/navoff/led-cube) - светодиодные кубы 4x4x4 и 8x8x8, STM32F303 и STM32F407
 
 ## Структура
 

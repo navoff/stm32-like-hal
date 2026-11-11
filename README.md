@@ -61,6 +61,7 @@ Platform-independent utilities: `utils/fifo` (byte and generic ring buffers),
 ## Used in
 
 - [nixie](https://github.com/navoff/nixie) - desk clock on IN-14 nixie tubes, STM32F100
+- [led-cube](https://github.com/navoff/led-cube) - 4x4x4 and 8x8x8 LED cubes, STM32F303 and STM32F407
 
 ## Layout
 
