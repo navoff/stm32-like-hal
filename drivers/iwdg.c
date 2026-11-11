@@ -18,7 +18,7 @@
 
 /// Nominal LSI frequency, Hz
 /// @note Actual frequency may differ
-#if defined(GD32E11X) || defined(STM32F1XX) || defined(STM32F3XX)
+#if defined(GD32E11X) || defined(STM32F1XX) || defined(STM32F30X)
   #define IWDG_LSI_FREQ 40000
 #else
   #define IWDG_LSI_FREQ 32000
