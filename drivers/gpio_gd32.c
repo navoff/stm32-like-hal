@@ -362,6 +362,17 @@ bool gpio_pin_state(uint8_t gpio_idx, uint8_t pin_idx)
 #endif
 }
 
+volatile uint32_t *gpio_get_bsrr(uint8_t gpio_idx)
+{
+  hal_assert((gpio_idx < GPIO_AMOUNT) && (gpio_hw_items[gpio_idx].gpio != (uint32_t)NULL));
+
+#if defined(GD32E11X) || defined(GD32L23X)
+  return &GPIO_BOP(gpio_hw_items[gpio_idx].gpio);
+#else
+  #error This MCU not supported
+#endif
+}
+
 void gpio_pin_toggle(uint8_t gpio_idx, uint8_t pin_idx)
 {
   hal_assert((gpio_idx < GPIO_AMOUNT) && (pin_idx < GPIO_PIN_AMOUNT) &&

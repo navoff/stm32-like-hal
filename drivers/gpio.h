@@ -209,6 +209,15 @@ void gpio_pin_cmd(uint8_t gpio_idx, uint8_t pin_idx, bool new_state);
 void gpio_pin_toggle(uint8_t gpio_idx, uint8_t pin_idx);
 
 /**
+ * @brief Address of the port bit set/reset register (BSRR on STM32, BOP on GD32), for code that
+ *        must switch pins faster than gpio_pin_cmd() allows, for example in an interrupt.
+ *        Writing (1 << pin_idx) sets the pin, writing (1 << (pin_idx + 16)) resets it; pins
+ *        whose bits are zero keep their state.
+ * @param gpio_idx - port index: GPIOA - 0, GPIOB - 1, etc.
+ */
+volatile uint32_t *gpio_get_bsrr(uint8_t gpio_idx);
+
+/**
  * @brief Read input state
  * @param gpio_idx - port index: GPIOA - 0, GPIOB - 1, etc.
  * @param pin_idx - pin index: 0..(GPIO_PIN_AMOUNT - 1)

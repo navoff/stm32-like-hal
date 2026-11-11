@@ -1335,6 +1335,18 @@ void gpio_pin_toggle(uint8_t gpio_idx, uint8_t pin_idx)
 #endif
 }
 
+volatile uint32_t *gpio_get_bsrr(uint8_t gpio_idx)
+{
+  hal_assert(gpio_idx < GPIO_AMOUNT);
+
+#if defined(STM32F1XX) || defined(STM32F30X) || defined(STM32F4XX) || defined(STM32L4XX) ||        \
+    defined(STM32F0XX)
+  return &gpio_hw_items[gpio_idx].gpio->BSRR;
+#else
+  #error This MCU not supported
+#endif
+}
+
 bool gpio_pin_state(uint8_t gpio_idx, uint8_t pin_idx)
 {
   hal_assert((gpio_idx < GPIO_AMOUNT) && (pin_idx < GPIO_PIN_AMOUNT));
